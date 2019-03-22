@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
+long long n;
 
 int main(){
-    long long n;
     cin>>n;
     int subs = 0;
     while(n>0){
