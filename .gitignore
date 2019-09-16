@@ -1,2 +1,14 @@
+# Executables
 *.exe
 *.out
+
+# Latex verbatim
+*.log
+*.aux
+*.nav
+*.snm
+*.toc
+*.vrb
+
+# Swap files
+*.swp
