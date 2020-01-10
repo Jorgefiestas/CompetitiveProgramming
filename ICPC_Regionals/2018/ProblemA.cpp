@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-double fx;
-int x;
+int x, y;
+char p;
 
 int gcd(int a, int b){
 	if(a%b == 0) return b;
@@ -9,8 +9,8 @@ int gcd(int a, int b){
 }
 
 int main(){
-	cin>>fx;
-	x = (int)(fx*100.0);
+	cin>>x>>p>>y;
+	x = x * 100 + y;
 	cout<<36000/gcd(36000,x)<<endl;
 	return 0;
 }

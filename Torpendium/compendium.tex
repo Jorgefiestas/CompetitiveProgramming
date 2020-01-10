@@ -1,0 +1,115 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily,
+  keywordstyle=\color{magenta},
+  stringstyle=\color{codepurple},
+  numbers=left,
+  numbersep=5pt,
+  numberstyle=\tiny\color{codegray},
+  backgroundcolor=\color{backcolour},
+  showstringspaces=false,
+  tabsize=2
+}
+
+\title{The Ultimate ICPC Torpedium}
+\author{Jorge Fiestas}
+
+\begin{document}
+
+\maketitle
+
+\section{String Matching}
+
+\subsection{KMP Algorithm}
+
+\begin{lstlisting}
+void border(string &s) {
+	int n = s.size();
+	b[0] = -1;
+
+	for (int i = 1; i <= n; ++i) {
+		b[i] = b[i-1];
+		while (b[i] != -1 and s[i-1] != s[b[i]])
+			b[i] = b[b[i]];
+		b[i] += 1;
+	}
+
+	return b;
+}
+\end{lstlisting}
+
+\section{Tree Like Structures}
+
+\subsection{Fenwick Tree (BIT)}
+
+\begin{lstlisting}
+void add(int *bit, int idx, int v) {
+    while (idx <= n) {
+        bit[idx] += v;
+        idx += idx & (-idx);
+    }
+}
+
+int sum(int *bit, int idx){
+    int s = 0;
+    while(idx > 0){
+        s += bit[idx];
+        idx -= idx & (-idx);
+    }
+    return s;
+}
+\end{lstlisting}
+
+\section{Miscellaneous}
+
+\subsection{Fast Fourier Transform}
+
+\begin{lstlisting}
+using cd = complex<double>;
+const double PI = acos(-1);
+
+void fft(vector<cd> & a, bool invert) {
+    int n = a.size();
+
+    for (int i = 1, j = 0; i < n; i++) {
+        int bit = n >> 1;
+        for (; j & bit; bit >>= 1)
+            j ^= bit;
+        j ^= bit;
+
+        if (i < j)
+            swap(a[i], a[j]);
+    }
+
+    for (int len = 2; len <= n; len <<= 1) {
+        double ang = 2 * PI / len * (invert ? -1 : 1);
+        cd wlen(cos(ang), sin(ang));
+        for (int i = 0; i < n; i += len) {
+            cd w(1);
+            for (int j = 0; j < len / 2; j++) {
+                cd u = a[i+j], v = a[i+j+len/2] * w;
+                a[i+j] = u + v;
+                a[i+j+len/2] = u - v;
+                w *= wlen;
+            }
+        }
+    }
+
+    if (invert) {
+        for (cd & x : a)
+            x /= n;
+    }
+}
+\end{lstlisting}
+
+\end{document}
