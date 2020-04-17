@@ -1,107 +1,95 @@
 #include <bits/stdc++.h>
 using namespace std;
-multiset<long long> numerator;
-multiset<long long> denominator;
-map<long long, vector<long long>> pfact;
+const int maxn = 1e5;
+const int N = 1e7 +  10;
+int n, m, a[maxn],  b[maxn], spf[N], cnt[N];
+vector<int> numerator, denominator;
 
-void primeFN(long long x){
-	if(pfact.find(x) != pfact.end()){
-		for(long long y : pfact[x])
-			numerator.insert(y);
+void sieve() {
+	for (int i = 1; i < N; i++) {
+		spf[i] = i;
+	}
+
+	for (int i = 2; i * i < N; i++) {
+		if (spf[i] != i) continue;
+		for (int j = i * i; j < N; j += i) {
+			spf[j]  = min(spf[j], i);
+		}
+	}
+}
+
+void decompose(int x, int val) {
+	while (x > 1) {
+		cnt[spf[x]] += val;
+		x /= spf[x];
+	}
+}
+
+void mul(long long &x, vector<int> &vec, long long y) {
+	if (x * y > 1e7) {
+		vec.emplace_back(x);
+		x = y;
 		return;
 	}
-	long long ox = x;
-	vector<long long> primes;
-	while(x%2 == 0){
-		numerator.insert(2);
-		primes.emplace_back(2);
-		x /= 2;
-	}
-	
-	for(long long i = 3; i*i <= x; i += 2){
-		while(x%i == 0){
-			numerator.insert(i);
-			primes.emplace_back(i);
-			x /= i;
-		}	
-	}
-	if(x > 2){
-		primes.emplace_back(x);
-		numerator.insert(x);
-	}
-	pfact[ox] = primes;
+	x *= y;
 }
 
-void primeFD(long long x){
-	if(pfact.find(x) != pfact.end()){
-        for(long long y : pfact[x]){
-            auto it = numerator.find(y);
-			if(it == numerator.end()) denominator.insert(y);
-			else numerator.erase(it);
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	sieve();
+
+	cin >> n >> m;
+
+	for (int i = 0; i < n; i++) {
+		cin >> a[i];
+		decompose(a[i], 1);
+	}
+	for (int i = 0; i < m; i++) {
+		cin >> b[i];
+		decompose(b[i], -1);
+	}
+
+	for (int i = 0; i < n; i++) {
+		int ans = 1;
+		int x = a[i];
+
+		while (x > 1) {
+			if (cnt[spf[x]] > 0) {
+				ans *= spf[x];
+				cnt[spf[x]]--;
+			}
+			x /= spf[x];
 		}
-        return;
-    }
-	long long ox = x;
-	vector<long long> primes;
-	while(x%2 == 0){
-		auto it = numerator.find(2);
-		if(it != numerator.end()) numerator.erase(it);
-		else denominator.insert(2);
-		x /= 2;
-		primes.emplace_back(2);
+
+		numerator.emplace_back(ans);
+	}
+	for (int i = 0; i < m; i++) {
+		int ans = 1;
+		int x = b[i];
+
+		while (x > 1) {
+			if (cnt[spf[x]] < 0) {
+				ans *= spf[x];
+				cnt[spf[x]]++;
+			}
+			x /= spf[x];
+		}
+
+		denominator.emplace_back(ans);
 	}
 
-    for(long long i = 3; i*i<=x; i+=2){
-        while(x%i == 0){
-			auto it = numerator.find(i);
-			if(it != numerator.end()) numerator.erase(it);
-			else denominator.insert(i);
-			x /= i;
-			primes.emplace_back(i);
-        }
-    }
-	if(x > 2){
-		auto it = numerator.find(x);
-		if(it != numerator.end()) numerator.erase(it);
-		else denominator.insert(x);
-		primes.emplace_back(x);
-    }
-	pfact[ox] = primes;
-}
+	cout << n << ' ' << m << '\n';
 
-int main(){
-	long long n, m, t;
-	cin>>n>>m;
-	while(n--){
-		cin>>t;
-		primeFN(t);
+	for (int a : numerator) {
+		cout <<  a << ' ';
 	}
-	while(m--){
-		cin>>t;
-		primeFD(t);
-	}
-	while(numerator.size() > 100000){
-		long long x = *numerator.begin() * *next(numerator.begin(),1);
-		numerator.erase(numerator.begin());
-		numerator.erase(numerator.begin());
-		numerator.insert(x);
-	}
-	while(denominator.size() > 100000){
-		long long x = *denominator.begin() * *next(denominator.begin(),1);
-        denominator.erase(denominator.begin());
-        denominator.erase(denominator.begin());
-        denominator.insert(x);
-	}
-	if(!numerator.size()) numerator.insert(1);
-	if(!denominator.size())denominator.insert(1);
+	cout << '\n';
 
-	cout<<numerator.size()<<" "<<denominator.size()<<endl;
+	for (int a : denominator) {
+		cout <<  a << ' ';
+	}
+	cout << '\n';
 
-	for(long long x : numerator)
-		cout<<x<<" ";
-	cout<<endl;
-
-	for(long long x : denominator)
-		cout<<x<<" ";
-	cout<<endl;
+	return 0;
 }
