@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> n >> p;
+
+	map<int, int> cnt;
+	int mx = 0;
+
+	for (int i = 1; i <= n; i++) {
+		cin >> a[i];
+		mx = max(a[i], mx);
+		cnt[a[i]] += 1;
+	}
+
+	sort(a + 1, a + n + 1);
+
+	int sp = max(a[0], a[n - 1] - n + 1);
+	
+	int csum = 0;
+	for (int i = n; i > 0; i--) {
+		if (a[i] == a[i + 1]) continue;
+		int pnum = n - csum - a[i];
+		int len = cnt[a[i]];
+
+		open[p - pnum] += 1;
+		close[p + len - pnum] += 1;
+
+		csum += cnt[a[i]];
+	}
+
+	int j = 1;
+
+	for (int i = ; i < a[n - 1]; i++) {
+		while (a[j + 1] <= i) {
+			j += 1;
+		}
+
+		int lte = n - j;
+		if (lte > p) continue;
+
+
+	}
+}
