@@ -1,7 +1,7 @@
 int sz[N]
 
 void calSize(int v, int p) {
-	int sz[v] = 1;
+	sz[v] = 1;
  
 	for (int u : adjList[v]) {
 		if (u == p) continue;
